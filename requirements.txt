@@ -1,0 +1,40 @@
+# pytorch,transformers, etc #
+datasets==3.1.0
+torch
+torchvision
+lightning
+pytorch-lightning
+transformers
+torchmetrics
+entmax
+
+
+# --------- hydra --------- #
+hydra-core
+hydra-colorlog
+hydra-optuna-sweeper
+omegaconf
+
+# --------- others --------- #
+rootutils       # standardizing the project root setup
+debugpy        # debugging helper
+pre-commit      # hooks for applying linters on commit
+rich            # beautiful text formatting in terminal
+pytest          # tests
+einops
+ipython
+jsonlines
+numpy
+pandas
+pickleshare
+pyyaml
+scikit-learn
+scipy
+tqdm
+wandb
+# sh            # for running bash commands in some tests (linux/macos only)
+# entmax
+# sentencepiece
+# pynini==2.1.5
+# soundfile==0.10.2.post1
+# librosa==0.12.1

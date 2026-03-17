@@ -1,0 +1,13 @@
+defaults:
+  - default
+  
+model: 
+  _target_: transformers.LlamaForCausalLM
+
+  config: 
+    _target_: transformers.LlamaConfig
+    vocab_size: 4
+    hidden_size: 2048
+    num_hidden_layers: 4
+    num_attention_heads: 8
+    max_position_embeddings: 1025

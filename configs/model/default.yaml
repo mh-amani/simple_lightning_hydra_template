@@ -1,0 +1,3 @@
+_target_: src.model.base_lightning_module.BaseLightningModule
+lr: 0.001
+model: ???

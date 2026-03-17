@@ -1,0 +1,18 @@
+supervision_scheduler:
+  _target_: src.callbacks.supervision_probability_callback.SupervisionProbabilitySchedulerCallback
+
+  scheduler: 
+    _target_: src.utils.schedulers.dict_scheduler.DictScheduler
+    num_warmup_steps: 25
+    num_training_steps: 80
+    power: 1.0
+    hp_init_dict:
+      train_x_0_x_2: 0.0
+      train_x_0_x_1_x_2: 1.0
+    hp_end_dict:
+      train_x_0_x_2: 1.0
+      train_x_0_x_1_x_2: 0.0
+
+
+
+  

@@ -1,0 +1,16 @@
+_target_: src.models.rnn.RNNLitModel
+
+model_params:
+  input_size: 1      # binary input: one bit per step
+  hidden_size: 64
+  num_layers: 2
+  dropout: 0.0
+  monitor: val/loss
+  compile: False
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 0.001
+  weight_decay: 0.0
+
+scheduler: null

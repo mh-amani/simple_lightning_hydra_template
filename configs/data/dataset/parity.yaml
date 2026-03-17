@@ -1,0 +1,4 @@
+dataset_config:
+  _target_: src.data.dataset.parity.ParityDataset
+  sequence_length: 20
+  dataset_size: 1024

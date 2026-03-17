@@ -1,0 +1,11 @@
+class_path:
+  _target_: datasets.load_dataset
+  
+  path: parquet
+
+  data_files:
+    train: '${...dataset_path}/train.parquet'
+    test: '${...dataset_path}/test.parquet'
+    validation: '${...dataset_path}/validation.parquet'
+
+dataset_path: 'data/sphere/train_512_validation_2048_test_2048_'

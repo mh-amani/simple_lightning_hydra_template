@@ -1,0 +1,106 @@
+// ── gumbel temp=1.0 ──────────────────────────────────────────────────────────
+
+// scan llama 3 1b:
+0: python src/train.py experiment=text2text/scan/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=scan_llama3_1b_mem_02_gumbel10
+1: python src/train.py experiment=text2text/scan/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=scan_llama3_1b_mem_02_gumbel10_nograd
+2: python src/train.py experiment=text2text/scan/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=scan_llama3_1b_02_gumbel10
+3: python src/train.py experiment=text2text/scan/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=scan_llama3_1b_02_gumbel10_nograd
+
+// pcfg llama 3 1b:
+10: python src/train.py experiment=text2text/pcfg/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=pcfg_llama3_1b_mem_02_gumbel10
+11: python src/train.py experiment=text2text/pcfg/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=pcfg_llama3_1b_mem_02_gumbel10_nograd
+12: python src/train.py experiment=text2text/pcfg/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=pcfg_llama3_1b_02_gumbel10
+13: python src/train.py experiment=text2text/pcfg/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=pcfg_llama3_1b_02_gumbel10_nograd
+
+// cogs llama 3 1b:
+20: python src/train.py experiment=text2text/cogs/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=cogs_llama3_1b_mem_02_gumbel10
+21: python src/train.py experiment=text2text/cogs/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=cogs_llama3_1b_mem_02_gumbel10_nograd
+22: python src/train.py experiment=text2text/cogs/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=cogs_llama3_1b_02_gumbel10
+23: python src/train.py experiment=text2text/cogs/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=cogs_llama3_1b_02_gumbel10_nograd
+
+// cfq llama 3 1b:
+30: python src/train.py experiment=text2text/cfq/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=cfq_llama3_1b_mem_02_gumbel10
+31: python src/train.py experiment=text2text/cfq/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=cfq_llama3_1b_mem_02_gumbel10_nograd
+32: python src/train.py experiment=text2text/cfq/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=cfq_llama3_1b_02_gumbel10
+33: python src/train.py experiment=text2text/cfq/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=1.0 task_name=cfq_llama3_1b_02_gumbel10_nograd
+
+
+// ── gumbel temp=0.5 ──────────────────────────────────────────────────────────
+
+// scan llama 3 1b | gumbel t=0.5:
+100: python src/train.py experiment=text2text/scan/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=scan_llama3_1b_mem_02_gumbel05
+101: python src/train.py experiment=text2text/scan/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=scan_llama3_1b_mem_02_nograd_gumbel05
+102: python src/train.py experiment=text2text/scan/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=scan_llama3_1b_02_gumbel05
+103: python src/train.py experiment=text2text/scan/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=scan_llama3_1b_02_nograd_gumbel05
+
+// pcfg llama 3 1b | gumbel t=0.5:
+110: python src/train.py experiment=text2text/pcfg/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=pcfg_llama3_1b_mem_02_gumbel05
+111: python src/train.py experiment=text2text/pcfg/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=pcfg_llama3_1b_mem_02_nograd_gumbel05
+112: python src/train.py experiment=text2text/pcfg/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=pcfg_llama3_1b_02_gumbel05
+113: python src/train.py experiment=text2text/pcfg/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=pcfg_llama3_1b_02_nograd_gumbel05
+
+// cogs llama 3 1b | gumbel t=0.5:
+120: python src/train.py experiment=text2text/cogs/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=cogs_llama3_1b_mem_02_gumbel05
+121: python src/train.py experiment=text2text/cogs/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=cogs_llama3_1b_mem_02_nograd_gumbel05
+122: python src/train.py experiment=text2text/cogs/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=cogs_llama3_1b_02_gumbel05
+123: python src/train.py experiment=text2text/cogs/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=cogs_llama3_1b_02_nograd_gumbel05
+
+// cfq llama 3 1b | gumbel t=0.5:
+130: python src/train.py experiment=text2text/cfq/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=cfq_llama3_1b_mem_02_gumbel05
+131: python src/train.py experiment=text2text/cfq/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=cfq_llama3_1b_mem_02_nograd_gumbel05
+132: python src/train.py experiment=text2text/cfq/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=cfq_llama3_1b_02_gumbel05
+133: python src/train.py experiment=text2text/cfq/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 model.models_config.auto_reg_wrapper.discretizer.temperature=0.5 task_name=cfq_llama3_1b_02_nograd_gumbel05
+
+
+// ── softmax ───────────────────────────────────────────────────────────────────
+
+// scan llama 3 1b | softmax:
+200: python src/train.py experiment=text2text/scan/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=scan_llama3_1b_mem_02_softmax
+201: python src/train.py experiment=text2text/scan/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=scan_llama3_1b_mem_02_nograd_softmax
+202: python src/train.py experiment=text2text/scan/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=scan_llama3_1b_02_softmax
+203: python src/train.py experiment=text2text/scan/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=scan_llama3_1b_02_nograd_softmax
+
+// pcfg llama 3 1b | softmax:
+210: python src/train.py experiment=text2text/pcfg/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=pcfg_llama3_1b_mem_02_softmax
+211: python src/train.py experiment=text2text/pcfg/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=pcfg_llama3_1b_mem_02_nograd_softmax
+212: python src/train.py experiment=text2text/pcfg/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=pcfg_llama3_1b_02_softmax
+213: python src/train.py experiment=text2text/pcfg/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=pcfg_llama3_1b_02_nograd_softmax
+
+// cogs llama 3 1b | softmax:
+220: python src/train.py experiment=text2text/cogs/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=cogs_llama3_1b_mem_02_softmax
+221: python src/train.py experiment=text2text/cogs/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=cogs_llama3_1b_mem_02_nograd_softmax
+222: python src/train.py experiment=text2text/cogs/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=cogs_llama3_1b_02_softmax
+223: python src/train.py experiment=text2text/cogs/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=cogs_llama3_1b_02_nograd_softmax
+
+// cfq llama 3 1b | softmax:
+230: python src/train.py experiment=text2text/cfq/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=cfq_llama3_1b_mem_02_softmax
+231: python src/train.py experiment=text2text/cfq/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=cfq_llama3_1b_mem_02_nograd_softmax
+232: python src/train.py experiment=text2text/cfq/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=cfq_llama3_1b_02_softmax
+233: python src/train.py experiment=text2text/cfq/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=softmax' task_name=cfq_llama3_1b_02_nograd_softmax
+
+
+// ── identity (argmax, no noise — ablation) ────────────────────────────────────
+
+// scan llama 3 1b | identity:
+300: python src/train.py experiment=text2text/scan/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=scan_llama3_1b_mem_02_identity
+301: python src/train.py experiment=text2text/scan/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=scan_llama3_1b_mem_02_nograd_identity
+302: python src/train.py experiment=text2text/scan/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=scan_llama3_1b_02_identity
+303: python src/train.py experiment=text2text/scan/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=scan_llama3_1b_02_nograd_identity
+
+// pcfg llama 3 1b | identity:
+310: python src/train.py experiment=text2text/pcfg/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=pcfg_llama3_1b_mem_02_identity
+311: python src/train.py experiment=text2text/pcfg/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=pcfg_llama3_1b_mem_02_nograd_identity
+312: python src/train.py experiment=text2text/pcfg/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=pcfg_llama3_1b_02_identity
+313: python src/train.py experiment=text2text/pcfg/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=pcfg_llama3_1b_02_nograd_identity
+
+// cogs llama 3 1b | identity:
+320: python src/train.py experiment=text2text/cogs/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=cogs_llama3_1b_mem_02_identity
+321: python src/train.py experiment=text2text/cogs/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=cogs_llama3_1b_mem_02_nograd_identity
+322: python src/train.py experiment=text2text/cogs/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=cogs_llama3_1b_02_identity
+323: python src/train.py experiment=text2text/cogs/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=cogs_llama3_1b_02_nograd_identity
+
+// cfq llama 3 1b | identity:
+330: python src/train.py experiment=text2text/cfq/llama3_1b_mem_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=cfq_llama3_1b_mem_02_identity
+331: python src/train.py experiment=text2text/cfq/llama3_1b_mem_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=cfq_llama3_1b_mem_02_nograd_identity
+332: python src/train.py experiment=text2text/cfq/llama3_1b_02 trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=cfq_llama3_1b_02_identity
+333: python src/train.py experiment=text2text/cfq/llama3_1b_02_nograd trainer.devices=8 data.train_batch_size=32 data.val_batch_size=128 'model/discrete_bottleneck=identity' task_name=cfq_llama3_1b_02_nograd_identity

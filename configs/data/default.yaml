@@ -1,0 +1,7 @@
+defaults:
+  - dataset@_here_: ???
+
+_target_: src.data.base_datamodule.BaseDatamodule
+
+batch_size: 128
+num_workers: 4

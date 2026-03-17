@@ -1,0 +1,26 @@
+# @package _global_
+
+# Cumulative parity: predict the running XOR of a binary sequence at each step.
+# A linear model cannot solve this — it requires sequential memory.
+# An LSTM with hidden_size=64 reaches >99% accuracy in ~30 epochs on CPU.
+#
+# Run with:
+#   python src/train.py experiment=parity_rnn trainer=cpu 'tags=["parity"]'
+
+defaults:
+  - override /model: rnn
+  - override /data/dataset@data: parity
+  - override /callbacks: basic
+
+task_name: parity_rnn
+
+logger:
+  project: sequence_learning
+  tags: [rnn, parity]
+
+trainer:
+  max_epochs: 50
+
+data:
+  batch_size: 64
+  num_workers: 0    # 0 is safest on macOS/Windows for small datasets
