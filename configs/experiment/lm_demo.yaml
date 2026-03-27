@@ -1,0 +1,48 @@
+# @package _global_
+#
+# Causal LM pre-training demo on wikitext-103.
+# Uses a ~360M Llama trained from scratch with the GPT-2 tokenizer.
+#
+# Quick CPU smoke-test (slow but verifies the pipeline):
+#   python src/train.py experiment=lm_demo trainer=cpu data.batch_size=4 'tags=["lm_demo"]'
+#
+# Single GPU with bf16:
+#   python src/train.py experiment=lm_demo trainer=gpu_bf16 'tags=["lm_demo"]'
+#
+# Multi-GPU with FSDP:
+#   python src/train.py experiment=lm_demo trainer=fsdp 'tags=["lm_demo"]'
+#
+# Scale to OpenWebText:
+#   python src/train.py experiment=lm_demo trainer=gpu_bf16 \
+#     data.dataset_name=Skylion007/openwebtext data.dataset_config_name=null \
+#     data.val_split=train data.test_split=train \
+#     'tags=["lm_owt"]'
+
+defaults:
+  - override /model: causal_lm
+  - override /data: streaming
+  - override /callbacks: basic
+
+task_name: lm_demo
+
+logger:
+  project: fllm
+  tags: [causal_lm, wikitext]
+
+trainer:
+  # Step-based training works better than epoch-based for streaming datasets.
+  # max_epochs is set to a large number so Lightning doesn't stop early;
+  # training terminates when max_steps is reached.
+  max_epochs: 9999
+  max_steps: 5000
+  val_check_interval: 500       # validate every 500 steps
+  check_val_every_n_epoch: null # disable epoch-based validation
+  log_every_n_steps: 10
+
+data:
+  batch_size: 16
+  num_workers: 2                # set >0 on cluster
+
+model:
+  optimizer:
+    lr: 3.0e-4

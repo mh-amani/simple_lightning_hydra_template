@@ -14,6 +14,36 @@ pip install -r requirements.txt
 python ./src/train.py experiment=parity_rnn trainer=cpu 'tags=["parity"]'
 ```
 
+**Run RNN LM on wikitext-2 (CPU smoke-test):**
+```bash
+# one-time data download (~5 MB)
+python scripts/prepare_data/prepare_text_dataset.py
+python ./src/train.py experiment=rnn_lm trainer=cpu 'tags=["rnn_lm"]'
+```
+
+**Run causal LM demo (wikitext-103, CPU smoke-test):**
+```bash
+python ./src/train.py experiment=lm_demo trainer=cpu 'tags=["lm_demo"]'
+```
+
+**Run causal LM on single GPU with bf16:**
+```bash
+python ./src/train.py experiment=lm_demo trainer=gpu_bf16 'tags=["lm_demo"]'
+```
+
+**Run causal LM on multiple GPUs with FSDP:**
+```bash
+python ./src/train.py experiment=lm_demo trainer=fsdp 'tags=["lm_demo"]'
+```
+
+**Scale to a larger dataset (e.g. OpenWebText):**
+```bash
+python ./src/train.py experiment=lm_demo trainer=gpu_bf16 \
+  data.dataset_name=Skylion007/openwebtext data.dataset_config_name=null \
+  data.val_split=train data.test_split=train \
+  trainer.max_steps=100000 'tags=["lm_owt"]'
+```
+
 **Run with specific overrides:**
 ```bash
 # Override config values inline
@@ -35,6 +65,12 @@ python ./src/train.py debug=true
 **Generate data (parity/XOR sequences):**
 ```bash
 python scripts/create_data/cumulative_parity_dataset.py --local_dir data/parity --train_size 1024 --length 256 --bit_width 1 --test_size 512
+```
+
+**Download and save a text dataset (wikitext-2, one-time):**
+```bash
+python scripts/prepare_data/prepare_text_dataset.py
+# saves to ./data/wikitext2; pass --output_dir and --config to change dataset
 ```
 
 **Submit cluster jobs (Apple Bolt):**
@@ -65,23 +101,24 @@ Hydra outputs run artifacts to `logs/<task_name>/runs/<timestamp>/`. WandB is th
 ### Source code (`src/`)
 
 **Models** — extend `LitModuleBase` ([src/models/base.py](src/models/base.py)):
-- Override `_initialize_models()` — create all `nn.Module` objects as `self.<name>`, return them as a list in `self.parametric_models`
+- Override `_initialize_models()` — create all `nn.Module` objects as `self.<name>`, return them as a list assigned to `self.parametric_models`
 - Override `forward(batch, stage)` and `model_step(batch, stage)` for compute logic; or override the individual `training_step` / `validation_step` / `test_step` directly (as `RNNLitModel` does) to log extra metrics
 - `configure_optimizers` instantiates `self.hparams.optimizer` and optionally `self.hparams.scheduler` via Hydra; set `scheduler: null` in model config to disable
 - Scheduler config supports a `scheduler_config` sub-key for Lightning scheduler dict options (e.g. `monitor`, `interval`)
 - Logging stages: `'learn'` (training), `'val'`, `'test'` — use `self.logging_kwargs[stage]` for consistent `on_step`/`on_epoch`/`sync_dist` kwargs
 - `on_load_checkpoint` resets optimizer and scheduler states — useful for fine-tuning from a checkpoint without resuming the optimizer
 - `setup()` compiles all models in `self.parametric_models` if `model_params.compile=True`
-- Batch convention: batch is a dict, e.g. `batch['sequence']`, `batch['cot']`, `batch['x']`, `batch['y']`
+- Batch convention: batch is a dict, e.g. `batch['sequence']`, `batch['input_ids']`, `batch['x']`, `batch['y']`
 
 **Data** — extend `BaseDatamodule` ([src/data/base_datamodule.py](src/data/base_datamodule.py)):
-- Constructor takes `dataset_config`, `batch_size`, `num_workers`
-- `setup()` calls `hydra.utils.instantiate(self.dataset_config)` to build train/val/test datasets (all three get independent instances of the same dataset class)
+- Constructor takes `dataset_config`, `batch_size`, `num_workers`, and optional `train_split`/`val_split`/`test_split`
+- When splits are provided, `setup()` passes `split=<value>` as an override to `hydra.utils.instantiate`; when omitted all three datasets are instantiated identically (backward-compatible with datasets like `ParityDataset` that don't have splits)
 - `persistent_workers` is enabled automatically when `num_workers > 0`
 
 **Datasets** ([src/data/dataset/](src/data/dataset/)):
 - `ParityDataset` — generates cumulative XOR/parity sequences on-the-fly (no files needed); returns `{sequence: (T,), cot: (T-1,), answer: scalar}`
-- Parquet-based datasets are loaded via `datasets.load_dataset` (see `sphere.yaml` for the config pattern)
+- `TextDataset` — map-style dataset; loads a pre-saved HF dataset from disk (`datasets.load_from_disk`), tokenizes all text at init, packs into fixed-length `seq_len` chunks; returns `{input_ids: (seq_len,)}`; use `scripts/prepare_data/prepare_text_dataset.py` to create the on-disk dataset
+- `StreamingTextDataset` — iterable dataset for large corpora; streams from HuggingFace, tokenizes and packs on-the-fly; returns the same `{input_ids: (seq_len,)}` interface as `TextDataset`
 
 **Training entry point** — [src/train.py](src/train.py):
 - Instantiates datamodule, model, callbacks, logger, trainer from `cfg`
@@ -89,10 +126,9 @@ Hydra outputs run artifacts to `logs/<task_name>/runs/<timestamp>/`. WandB is th
 - Runs `trainer.fit()` if `cfg.train=True`, then `trainer.test()` from best checkpoint if `cfg.test=True`
 - Returns metric dict for Hydra Optuna sweeper compatibility
 
-**Reference experiment** — [src/models/rnn.py](src/models/rnn.py) + [configs/experiment/parity_rnn.yaml](configs/experiment/parity_rnn.yaml):
-- LSTM that reads a binary sequence one bit at a time and predicts the running XOR at each step
-- Logs `loss` and `acc` per stage; reaches ~99% accuracy in ~30 epochs on CPU
-- Shows how to override `training_step`/`validation_step`/`test_step` when `model_step` returns more than just loss
+**Reference experiments** — [src/models/rnn.py](src/models/rnn.py):
+- `RNNLitModel` + [configs/experiment/parity_rnn.yaml](configs/experiment/parity_rnn.yaml): LSTM that reads a binary sequence one bit at a time and predicts the running XOR at each step; logs `loss` and `acc`; reaches ~99% accuracy in ~30 epochs on CPU; shows how to override `training_step`/`validation_step`/`test_step` when `model_step` returns more than just loss
+- `RNNLitLM` + [configs/experiment/rnn_lm.yaml](configs/experiment/rnn_lm.yaml): LSTM language model (embedding + LSTM + linear head) for next-token prediction; uses `batch['input_ids']` — the same interface as `LitCausalLM` — so data pipelines are fully interchangeable; logs `loss` and `ppl`
 
 ### Callbacks ([src/callbacks/](src/callbacks/))
 
@@ -156,6 +192,40 @@ Consequence: when overriding the dataset in an experiment, you must include the 
 ### PyTorch 2.6+ checkpoint loading
 
 PyTorch 2.6 changed `torch.load` to default `weights_only=True`, which fails for checkpoints that contain `OmegaConf` objects (saved hparams). `train.py` installs a `SafeCheckpointIO` on the trainer strategy after instantiation to restore `weights_only=False` for our own checkpoints. This is transparent and requires no config changes.
+
+### Causal LM pre-training (`src/models/causal_lm.py`)
+
+`LitCausalLM` extends `LitModuleBase` for next-token prediction with any HuggingFace causal LM:
+- Architecture is fully configured via Hydra: set `model_params.config._target_` to any HF config class (e.g. `transformers.LlamaConfig`) and provide its kwargs — no Python changes needed to switch architectures
+- Set `model_params.from_pretrained` to a HF model ID or local path to load pretrained weights instead
+- Logs `learn/loss`, `learn/ppl`, `learn/tokens_per_sec` during training; `val/loss`, `val/ppl` during validation
+- `tokens_per_sec` measures wall time per batch (forward + backward + optimizer step) and is a per-process metric (not averaged across ranks)
+
+### Streaming data (`src/data/streaming_datamodule.py`, `src/data/dataset/streaming_text.py`)
+
+`StreamingDatamodule` replaces `BaseDatamodule` for large-scale pre-training where the dataset doesn't fit in memory:
+- Uses HuggingFace `datasets` streaming mode — data is tokenized and packed on-the-fly
+- `StreamingTextDataset` packs tokens into non-overlapping chunks of `seq_len` tokens; each document ends with the tokenizer's `eos_token`
+- Configure via `configs/data/streaming.yaml`; override the dataset in an experiment with `- override /data: streaming`
+- For streaming datasets, use step-based training (`trainer.max_steps`) rather than epoch-based, and set `val_check_interval` instead of `check_val_every_n_epoch`
+- **Important:** val/test dataloaders always use `num_workers=0` — HF streaming splits often have only one shard, and giving more workers causes the datasets library to SIGKILL the extras, which crashes the DataLoader
+
+### Map-style text data (`src/data/dataset/text.py`)
+
+`TextDataset` is the in-memory alternative for datasets that fit in RAM (e.g. wikitext-2):
+- Download once with `scripts/prepare_data/prepare_text_dataset.py` (saves via `datasets.save_to_disk()`)
+- All tokenization and packing happens at init time; supports random access and full epoch shuffling
+- Returns `{input_ids: (seq_len,)}` — the same interface as `StreamingTextDataset`, so `RNNLitLM` and `LitCausalLM` are interchangeable across both data pipelines
+- Use `BaseDatamodule` with `train_split`/`val_split`/`test_split` set in the experiment config (see `configs/experiment/rnn_lm.yaml`)
+
+### Trainer configs for large-scale training
+
+| Config | Use case |
+|---|---|
+| `trainer=gpu_bf16` | Single GPU, bf16 mixed precision |
+| `trainer=fsdp` | Multi-GPU, FSDP sharding, bf16 mixed precision |
+
+For FSDP, set `devices: auto` (uses all available GPUs) or a specific count. The `fsdp` strategy is Lightning's built-in FSDP wrapper.
 
 ## Known Issues / Placeholders
 

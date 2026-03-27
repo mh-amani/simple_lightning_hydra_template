@@ -1,0 +1,6 @@
+dataset_config:
+  _target_: src.data.dataset.text.TextDataset
+  path: ${paths.data_dir}/wikitext2
+  seq_len: 256
+  tokenizer_name: gpt2
+  text_column: text

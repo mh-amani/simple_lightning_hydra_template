@@ -1,0 +1,15 @@
+_target_: src.data.streaming_datamodule.StreamingDatamodule
+
+batch_size: 32
+num_workers: 4
+
+dataset_name: "Salesforce/wikitext"
+dataset_config_name: "wikitext-103-raw-v1"
+train_split: "train"
+val_split: "validation"
+test_split: "test"
+text_column: "text"
+
+seq_len: 1024
+tokenizer_name: "gpt2"
+buffer_size: 1000     # shuffle buffer size (set 0 to disable)

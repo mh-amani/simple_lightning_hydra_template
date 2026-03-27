@@ -1,0 +1,17 @@
+_target_: src.models.rnn.RNNLitLM
+
+model_params:
+  monitor: val/loss
+  compile: false
+
+  vocab_size: 50257       # GPT-2 tokenizer; must match tokenizer used for data
+  embed_size: 256
+  hidden_size: 512
+  num_layers: 2
+  dropout: 0.2
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 1.0e-3
+
+scheduler: null

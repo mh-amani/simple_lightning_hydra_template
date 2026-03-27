@@ -1,0 +1,35 @@
+# @package _global_
+#
+# LSTM language model trained on wikitext-2.
+# Uses the same batch['input_ids'] interface as LitCausalLM, so the data
+# pipeline is fully interchangeable with the transformer experiments.
+#
+# Prepare data first (one-time):
+#   python scripts/prepare_data/prepare_text_dataset.py
+#
+# Run on CPU (smoke-test):
+#   python src/train.py experiment=rnn_lm trainer=cpu 'tags=["rnn_lm"]'
+#
+# Run on GPU:
+#   python src/train.py experiment=rnn_lm trainer=gpu_bf16 'tags=["rnn_lm"]'
+
+defaults:
+  - override /model: rnn_lm
+  - override /data/dataset@data: text
+  - override /callbacks: basic
+
+task_name: rnn_lm
+
+logger:
+  project: sequence_learning
+  tags: [rnn, lm, wikitext2]
+
+trainer:
+  max_epochs: 20
+
+data:
+  batch_size: 64
+  num_workers: 0          # 0 is safest on macOS/Windows for map-style datasets
+  train_split: train
+  val_split: validation
+  test_split: test

@@ -1,0 +1,26 @@
+_target_: src.models.causal_lm.LitCausalLM
+
+model_params:
+  monitor: val/loss
+  compile: true
+  from_pretrained: null   # set to a HF model ID to load pretrained weights
+
+  # Architecture — instantiated via hydra, any HF config class works here
+  config:
+    _target_: transformers.LlamaConfig
+    vocab_size: 50257           # GPT-2 tokenizer
+    hidden_size: 1024
+    intermediate_size: 4096     # 4 × hidden_size
+    num_hidden_layers: 24
+    num_attention_heads: 16
+    num_key_value_heads: 16     # set < num_attention_heads for GQA
+    max_position_embeddings: 1024
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 3.0e-4
+  weight_decay: 0.1
+  betas: [0.9, 0.95]
+  eps: 1.0e-8
+
+scheduler: null

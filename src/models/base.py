@@ -66,7 +66,7 @@ class LitModuleBase(LightningModule):
         }
 
     def _initialize_models(self) -> None:
-        NotImplementedError
+        raise NotImplementedError
 
     def forward(self, batch, stage='learn') -> torch.Tensor:
         """Perform a forward pass through the model `self.net`.
@@ -74,7 +74,7 @@ class LitModuleBase(LightningModule):
         :param x: A tensor of images.
         :return: A tensor of logits.
         """
-        NotImplementedError
+        raise NotImplementedError
 
 
     def model_step(
@@ -88,7 +88,7 @@ class LitModuleBase(LightningModule):
             - A tensor of predictions.
             - A tensor of target labels.
         """
-        NotImplementedError
+        raise NotImplementedError
 
 
     def training_step(
@@ -143,8 +143,7 @@ class LitModuleBase(LightningModule):
         :param stage: Either `"fit"`, `"validate"`, `"test"`, or `"predict"`.
         """
         if self.hparams['model_params'].get('compile', False) and stage == "fit":
-            for model in self.parametric_models:
-                model = torch.compile(model)
+            self.parametric_models = [torch.compile(m) for m in self.parametric_models]
 
 
     def configure_optimizers(self) -> Dict[str, Any]:

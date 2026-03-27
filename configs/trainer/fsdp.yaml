@@ -1,0 +1,7 @@
+defaults:
+  - default
+
+accelerator: gpu
+devices: auto   # uses all available GPUs
+strategy: fsdp
+precision: bf16-mixed

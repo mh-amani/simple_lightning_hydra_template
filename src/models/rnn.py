@@ -1,3 +1,4 @@
+import math
 from typing import Any, Dict, Tuple
 
 import torch
@@ -70,3 +71,68 @@ class RNNLitModel(LitModuleBase):
         loss, acc = self.model_step(batch, stage='test')
         self.log('test/loss', loss, **self.logging_kwargs['test'])
         self.log('test/acc',  acc,  **self.logging_kwargs['test'])
+
+
+class RNNLitLM(LitModuleBase):
+    """LSTM language model for next-token prediction on text.
+
+    Uses the same batch interface as LitCausalLM — batch['input_ids'] of shape
+    (B, T) — so it is interchangeable with any text datamodule. Unlike
+    LitCausalLM the label shift is done explicitly here (HF does it internally).
+
+    Batch keys expected:
+      batch['input_ids']  — (B, T) int64 token ids
+
+    Config (model_params):
+      vocab_size    — vocabulary size (must match the tokenizer used for data)
+      embed_size    — token embedding dimension
+      hidden_size   — LSTM hidden dimension
+      num_layers    — number of LSTM layers (default 2)
+      dropout       — dropout between LSTM layers when num_layers > 1 (default 0)
+    """
+
+    def _initialize_models(self):
+        p = self.hparams['model_params']
+        num_layers = p.get('num_layers', 2)
+        self.embedding = nn.Embedding(p['vocab_size'], p['embed_size'])
+        self.rnn = nn.LSTM(
+            input_size=p['embed_size'],
+            hidden_size=p['hidden_size'],
+            num_layers=num_layers,
+            batch_first=True,
+            dropout=p.get('dropout', 0.0) if num_layers > 1 else 0.0,
+        )
+        self.head = nn.Linear(p['hidden_size'], p['vocab_size'])
+        self.criterion = nn.CrossEntropyLoss()
+        return [self.embedding, self.rnn, self.head]
+
+    def forward(self, batch, stage='learn') -> torch.Tensor:
+        x = self.embedding(batch['input_ids'])  # (B, T, embed_size)
+        out, _ = self.rnn(x)                     # (B, T, hidden_size)
+        return self.head(out)                     # (B, T, vocab_size)
+
+    def model_step(self, batch, stage) -> torch.Tensor:
+        input_ids = batch['input_ids']           # (B, T)
+        logits = self.forward(batch, stage)      # (B, T, vocab_size)
+        # predict token t+1 from context 0..t
+        loss = self.criterion(
+            logits[:, :-1].reshape(-1, logits.size(-1)),
+            input_ids[:, 1:].reshape(-1),
+        )
+        return loss
+
+    def training_step(self, batch, batch_idx: int) -> torch.Tensor:
+        loss = self.model_step(batch, stage='learn')
+        self.log('learn/loss', loss, **self.logging_kwargs['learn'])
+        self.log('learn/ppl', math.exp(min(loss.item(), 20)), **self.logging_kwargs['learn'])
+        return loss
+
+    def validation_step(self, batch, batch_idx: int) -> None:
+        loss = self.model_step(batch, stage='val')
+        self.log('val/loss', loss, **self.logging_kwargs['val'])
+        self.log('val/ppl', math.exp(min(loss.item(), 20)), **self.logging_kwargs['val'])
+
+    def test_step(self, batch, batch_idx: int) -> None:
+        loss = self.model_step(batch, stage='test')
+        self.log('test/loss', loss, **self.logging_kwargs['test'])
+        self.log('test/ppl', math.exp(min(loss.item(), 20)), **self.logging_kwargs['test'])
